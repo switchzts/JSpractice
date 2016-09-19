@@ -1,0 +1,56 @@
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>倒计时时钟</title>
+<style>
+body,div{margin:0;padding:0;}
+body{color:#fff;font:16px/1.5 \5fae\8f6f\96c5\9ed1;}
+#countdown{width:300px;text-align:center;background:#1a1a1a;margin:10px auto;padding:20px 0;}
+input{border:0;width:283px;height:50px;cursor:pointer;margin-top:20px;background-color: blue;}
+input.cancel{background-color:red;}
+span{color:#000;width:80px;line-height:2;background:#fbfbfb;border:2px solid #b4b4b4;margin:0 10px;padding:0 10px;}
+</style>
+<script>
+window.onload = function ()
+{
+    var oCountDown = document.getElementById("countdown");  
+    var aInput = oCountDown.getElementsByTagName("input")[0];
+    var span = oCountDown.getElementsByTagName("span");
+    var timer = "";
+
+    //绑定点击事件
+    aInput.onclick = function(){
+        if(this.className == ""){
+            timer = setInterval(update,1000);
+            this.className = "cancel";
+        }
+        else{
+            this.className = "";
+            clearInterval(timer);
+        }
+    }
+    //格式化
+    function format(a){
+        return a.toString().replace(/^(\d)$/,"0$1");
+    }
+    //更新时间函数
+    function update(){
+        var nums = parseInt(span[0].innerHTML.replace(/^0/,"") * 60) + parseInt(span[1].innerHTML.replace(/^0/,""));
+        nums--;
+        if(nums <= 0){
+            clearInterval(timer);
+            return;
+        }
+        span[0].innerHTML = format(parseInt(nums/60));
+        span[1].innerHTML = format(parseInt(nums%60));
+    }
+}
+</script>
+</head>
+<body>
+<div id="countdown">
+    <span>01</span>分钟<span>03</span>秒
+    <input type="button" value="">
+</div>
+
+
+</body></html>
