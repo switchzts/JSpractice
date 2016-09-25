@@ -1,0 +1,99 @@
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>自动播放——幻灯片效果</title>
+<style>
+body,div,ul,li{margin:0;padding:0;}
+ul{list-style-type:none;}
+body{background:#000;text-align:center;font:12px/20px Arial;}
+#box{position:relative;width:492px;height:172px;background:#fff;border-radius:5px;border:8px solid #fff;margin:10px auto;}
+#box .list{position:relative;width:490px;height:170px;overflow:hidden;border:1px solid #ccc;}
+#box .list li{position:absolute;top:0;left:0;width:490px;height:170px;opacity:0;transition:all 1s; }
+#box .count{position:absolute;right:0;bottom:5px;}
+#box .count li{color:#fff;float:left;width:20px;height:20px;cursor:pointer;margin-right:5px;overflow:hidden;background:#F90;opacity:0.7;border-radius:20px;}
+#box .count li.current{color:red;background:#f60;}
+#tmp{width:100px;height:100px;background:red;position:absolute;}
+</style>
+<script type="text/javascript">
+window.onload = function ()
+{
+    var oBox = document.getElementById("box");
+    var aUl = document.getElementsByTagName("ul");
+    var aImg = aUl[0].getElementsByTagName("li");
+    var aNum = aUl[1].getElementsByTagName("li");
+    var timer = play = null;
+    var i = index = 0;
+    var bOrder = true;
+    //自动播放函数
+    function autoPlay (){
+        
+            //判断播放顺序
+            bOrder ? index++ : index--;
+            //正序
+            index >= aImg.length && (index = aImg.length - 2, bOrder = false);
+            //倒序
+            index <= 0 && (index = 0, bOrder = true);
+
+            if(index >= aImg.length) index = 0;  
+            for(i=0;i<aImg.length;i++){
+                aImg[i].style.opacity = 0;
+            }
+            aImg[index].style.opacity = 1;
+            showButton();
+    }
+    
+    timer = setInterval(autoPlay,2000);
+    //鼠标移入切换
+    function change(){
+        for(var i=0;i<aNum.length;i++){
+            aNum[i].onmouseover = function(i){
+                return function(){
+                    for(j=0;j<aImg.length;j++){
+                        aImg[j].style.opacity = 0;
+                    }
+                    aImg[i].style.opacity = 1;
+                    index = i;
+                    showButton();
+                }
+            }(i);
+        }
+    }
+    //鼠标移入取消自动播放
+    aUl[1].onmouseover = function(){
+        change(); 
+        clearInterval(timer);
+    }
+    //鼠标移出恢复自动播放
+    aUl[1].onmouseout = function(){
+        timer = setInterval(autoPlay,2000);
+    }
+    //显示按钮
+    function showButton(){
+        for(var i in aNum){
+            aNum[i].className = "";
+        }
+        aNum[index].className = "current";
+    }
+    
+}
+</script>
+</head>
+<body>
+<div id="box">
+    <ul class="list">
+        <li style="opacity: 1;"><img src="http://fgm.cc/learn/lesson4/img/01.jpg" width="490" height="170"></li>
+        <li style="opacity: 0;"><img src="http://fgm.cc/learn/lesson4/img/02.jpg" width="490" height="170"></li>
+        <li style="opacity: 0;"><img src="http://fgm.cc/learn/lesson4/img/03.jpg" width="490" height="170"></li>
+        <li style="opacity: 0;"><img src="http://fgm.cc/learn/lesson4/img/04.jpg" width="490" height="170"></li>
+        <li style="opacity: 0;"><img src="http://fgm.cc/learn/lesson4/img/05.jpg" width="490" height="170"></li>
+    </ul>
+    <ul class="count">
+        <li class="current">1</li>
+        <li class="">2</li>
+        <li class="">3</li>
+        <li class="">4</li>
+        <li class="">5</li>
+    </ul>
+</div>
+
+
+</body></html>

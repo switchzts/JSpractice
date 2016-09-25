@@ -1,0 +1,100 @@
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>移动效果（按轨迹移动）</title>
+<style type="text/css">
+body,div{margin:0;padding:0;}
+div{position:absolute;width:66px;height:45px;background:url(http://fgm.cc/learn/lesson7/img/1.gif) no-repeat;top:100px;left:50px;}
+p,input{margin:10px;}
+</style>
+<script type="text/javascript">
+window.onload = function ()
+{
+	var oDiv = document.getElementsByTagName("div")[0];
+	var aInput = document.getElementsByTagName("input");
+	var oP = document.getElementsByTagName("p")[0];
+	var i = 0;
+	
+	aInput[0].onclick = function (event)
+	{
+		(event || window.event).cancelBubble = true;
+		clearEvent();
+		//改变提示
+		this.value += "(已激活)";
+		oP.innerHTML = "鼠标点击页面， 人物将移动至鼠标位置！";
+		//绑定点击事件
+		document.onclick = function (event)
+		{
+			oDiv.style.background = "url(http://fgm.cc/learn/lesson7/img/2.gif) no-repeat";
+			//开始运动
+			startMove(oDiv, {left:event.clientX, top:event.clientY}, function(){oDiv.style.background = "url(http://fgm.cc/learn/lesson7/img/1.gif) no-repeat"});
+			
+		}	
+	};
+	
+	aInput[1].onclick = function (event)
+	{		
+		event.cancelBubble = true;
+		clearEvent();
+		this.value += "(已激活)";
+		oP.innerHTML = "按住鼠标左键，在页面划动，人物将按照鼠标轨迹移动。"
+		//储存位置数组
+		var MyPos = [];
+		document.onmousedown = function(event){
+			//初始位置数据
+			MyPos.push({x:event.clientX, y:event.clientY});
+			//移动时注入数据
+			document.onmousemove = function(event){
+				MyPos.push({x:event.clientX, y:event.clientY});	
+				//取消浏览器默认鼠标选中功能
+				return false;
+			}
+		}
+		document.onmouseup = function(){
+			//取消移动时注入数据
+			document.onmousemove = null;
+			oDiv.style.background = "url(http://fgm.cc/learn/lesson7/img/2.gif) no-repeat";	
+			//设置定时器
+			var timer = setInterval(function(){
+				//按次序移动位置
+				if(MyPos.length !== 0){
+					oDiv.style.left = MyPos[0].x + "px";
+					oDiv.style.top = MyPos[0].y + "px";
+					MyPos.shift();
+					
+				}
+				//完成后清除
+				else{
+					clearInterval(timer);
+					oDiv.style.background = "url(http://fgm.cc/learn/lesson7/img/1.gif) no-repeat";
+				}
+			}, 30);
+		};
+	}
+	//清楚所有事件和冒泡
+	function clearEvent()
+	{
+		document.onclick = null;
+		document.onmousedown = null;
+		document.onmousemove = null;
+		document.onmouseup = null;
+		for (i = 0; i < aInput.length; i++)
+		{
+			aInput[i].value = aInput[i].value.replace("(已激活)", "");
+			aInput[i].onmousedown = aInput[i].onmouseup = function (event)
+			{
+				(event || window.event).cancelBubble = true;	
+			};
+		}
+	}
+};
+
+</script>
+<script type="text/javascript" src = "js/animate.js"></script>
+</head>
+<body>
+<input type="button" value="根据鼠标点击位置移动"><input type="button" value="根据标鼠标轨迹移动">
+<p>请点击按钮激活功能！</p>
+<div></div>
+
+
+</body></html>

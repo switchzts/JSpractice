@@ -1,0 +1,127 @@
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>带Loading效果的图片切换</title>
+<style type="text/css">
+body,div,ul,li{margin:0;padding:0;}
+li{list-style:none;}
+body{font:12px/1.5 "宋体";background:#000;}
+#big{position:relative;width:800px;height:400px;min-height:400px;margin:20px auto;text-align:center;}
+#title{position:absolute;top:0;left:0;width:100%;background:#000;color:#fff;opacity:0.7;filter:alpha(opacity=70);font-size:20px;height:50px;}
+#title span{padding:0 5px;line-height:50px;display:block;}
+#big.loading{background:url(http://fgm.cc/learn/lesson7/img/loading.gif) 50% 50% no-repeat;}
+#masks_L,#masks_R{position:absolute;top:0;width:400px;height:100%;cursor:pointer;background:#f0f0f0;opacity:0;filter:alpha(opacity=0);}
+#masks_L{left:0;}
+#masks_R{right:0;}
+#btn_L,#btn_R{position:absolute;top:50%;margin-top:-40px;width:39px;height:80px;overflow:hidden;cursor:pointer;text-indent:-9999px;background:url(http://fgm.cc/learn/lesson7/img/btn.png) no-repeat;opacity:0;filter:alpha(opacity=0);}
+#btn_L{left:10px;background-position:0 0;}
+#btn_R{right:10px;background-position:-39px 0;}
+</style>
+<script type="text/javascript" src = "js/animate.js"></script>
+<script type="text/javascript">
+window.onload = function ()
+{
+	var oBig = document.getElementById("big");
+	var oMasksL = document.getElementById("masks_L");
+	var oMasksR = document.getElementById("masks_R");
+	var oBtnL = document.getElementById("btn_L");
+	var oBtnR = document.getElementById("btn_R");
+	var oTitle = document.getElementById("title");
+	var oSpan = oTitle.getElementsByTagName("span")[0];
+	var iNow = 0;
+	var aData = [
+		{"imgSrc" : "http://img1.gtimg.com/news/pics/hv1/106/238/825/53706421.jpg", "title" : "7月26日，吊车将事故现场的车头残片吊至大型运输车辆上。"},
+		{"imgSrc" : "http://img1.gtimg.com/news/pics/hv1/105/238/825/53706420.jpg", "title" : "7月26日，一辆大卡车准备驶离事故现场。"},
+		{"imgSrc" : "http://img1.gtimg.com/news/pics/hv1/101/238/825/53706416.jpg", "title" : "7月26日，工人在给最后一节车厢盖上彩条布，准备运离现场。"},
+		{"imgSrc" : "http://img1.gtimg.com/news/pics/hv1/99/238/825/53706414.jpg", "title" : "7月26日，一名工人在事故现场最后一节车厢上作业。"},
+		{"imgSrc" : "http://img1.gtimg.com/news/pics/hv1/100/238/825/53706415.jpg", "title" : "7月26日，工人在给最后一节车厢盖上彩条布，准备运离现场。"}
+	];
+	//鼠标控制显示按钮
+	oMasksL.onmouseover = oBtnL.onmouseover = function ()
+	{
+		startMove(oBtnL, {opacity: 100})
+	};
+	oMasksL.onmouseout = oBtnL.onmouseout = function ()
+	{
+		startMove(oBtnL, {opacity:0})	
+	};
+	
+	oMasksR.onmouseover = oBtnR.onmouseover = function ()
+	{
+		startMove(oBtnR, {opacity:100})
+	};
+	oMasksR.onmouseout = oBtnR.onmouseout = function ()
+	{
+		startMove(oBtnR, {opacity:0})	
+	};
+	//绑定按钮事件
+	oBtnL.onclick = function ()
+	{
+		
+		if (iNow <= 0)
+		{
+			alert("前面没有图片了！")
+			return;
+		}
+		iNow--;
+		loadImg();
+	};
+	oBtnR.onclick = function ()
+	{
+		if(iNow >= aData.length - 1)
+		{
+			alert("这是最后一张图片了！")
+			return;
+		}
+		iNow++;
+		loadImg();
+	};
+	//加载图片
+	function loadImg()
+	{
+		//变成加载图
+		oBig.className = "loading";
+		oSpan.style.opacity = oTitle.style.height = 0;
+		oSpan.style.filter = "alpha(opacity=0)";
+		var oImg = oBig.getElementsByTagName("img");
+		//删除前一张图片
+		oImg[0] && oBig.removeChild(oImg[0]);
+		//创建新图片节点
+		var oTemp = document.createElement("img");
+		//创建新图片
+		var oNewImg = new Image();
+		oNewImg.onload = function ()
+		{
+			oBig.className = "";			
+			oTemp.src = this.src;
+			oTemp.style.opacity = 0;
+			oBig.appendChild(oTemp);
+			//限制图片大小
+			oTemp.style.width = (oTemp.offsetWidth > 800 ? 800 : oTemp.offsetWidth) + "px";
+			oTemp.style.height = (oTemp.offsetHeight > 600 ? 600 :oTemp.offsetHeight) + "px";
+			oSpan.innerHTML = aData[iNow].title;
+			//显示图片
+			startMove(oTemp,{opacity:100},function(){
+				startMove(oTitle, {height:50}, function (){
+					startMove(oTitle.childNodes[0], {opacity:100})
+				})
+			});
+			//显示标题
+			
+		};
+		oNewImg.src = aData[iNow].imgSrc;
+	}
+	loadImg();
+}
+</script>
+</head>
+<body>
+	<div id="big" class="" style="height: 515px;">
+    	<div id="masks_L"></div>
+    	<div id="masks_R"></div>
+        <div id="btn_L" style="opacity: 0;">左</div>
+        <div id="btn_R">右</div>
+        <div id="title" style="height: 50px;"><span style="opacity: 1;">7月26日，吊车将事故现场的车头残片吊至大型运输车辆上。</span></div>
+    <img src="http://img1.gtimg.com/news/pics/hv1/106/238/825/53706421.jpg" style="width: 800px; height: 515px;"></div>
+
+
+</body></html>
