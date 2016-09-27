@@ -16,7 +16,7 @@ window.onload = function ()
 	
 	aInput[0].onclick = function (event)
 	{
-		(event || window.event).cancelBubble = true;
+		event.cancelBubble = true;
 		clearEvent();
 		//改变提示
 		this.value += "(已激活)";
